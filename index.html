@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تحليلك | معمل تحاليل طبية</title>
+<style>
+*{box-sizing:border-box}
+body{font-family:sans-serif;background:#F2F6FF;margin:0;padding:0;color:#1a1a1a}
+.top{background:#0057B8;color:#fff;padding:18px 14px 22px;text-align:center;border-radius:0 0 22px 22px}
+.top h1{margin:0;font-size:28px}
+.top p{margin:6px 0 0;opacity:.9;font-size:14px}
+.badge{display:inline-block;background:#FFC107;color:#111;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:bold;margin-top:10px}
+.wrap{max-width:520px;margin:-10px auto 0;padding:12px;padding-bottom:120px}
+.card{background:#fff;padding:16px;border-radius:18px;box-shadow:0 4px 16px rgba(0,0,0,.06);margin-bottom:12px}
+.card h3{margin:0 0 12px;color:#0057B8}
+input,select,textarea{width:100%;padding:13px;margin:6px 0;border:1.5px solid #E5E9F2;border-radius:12px;font-size:16px;font-family:inherit;background:#F9FAFF}
+input:focus{border-color:#0057B8;outline:none;background:#fff}
+label{font-weight:bold;font-size:14px}
+.row2{display:flex;gap:8px}.row2>*{flex:1}
+.opt{display:flex;gap:8px;margin:8px 0}
+.opt button{flex:1;padding:12px 4px;border:2px solid #E5E9F2;border-radius:12px;background:#fff;font-weight:bold;cursor:pointer;font-size:14px}
+.opt button.active{background:#0057B8;color:#fff;border-color:#0057B8}
+.pay button.active{background:#198754;border-color:#198754}
+.btn-gps{width:100%;padding:12px;background:#FFC107;border:none;border-radius:10px;font-weight:bold}
+.btn-img{width:100%;padding:12px;background:#6c757d;color:#fff;border:none;border-radius:10px;font-weight:bold}
+.btn-wa{width:100%;padding:16px;background:#25D366;border:none;border-radius:14px;font-size:18px;font-weight:bold;color:#fff}
+.test{display:flex;justify-content:space-between;align-items:center;background:#fff;padding:12px;margin:8px 0;border-radius:14px;box-shadow:0 2px 8px rgba(0,0,0,.04);border:1px solid #EEF2FF}
+.price{color:#0057B8;font-weight:bold;font-size:16px}
+.add{background:#00A651;color:#fff;border:none;padding:9px 16px;border-radius:10px;font-weight:bold;cursor:pointer}
+.add.selected{background:#dc3545}
+.cat{display:flex;gap:8px;overflow-x:auto;padding:4px 0}
+.cat button{white-space:nowrap;padding:9px 16px;border-radius:20px;border:1.5px solid #DDE5FF;background:#fff;font-weight:bold;cursor:pointer}
+.cat button.active{background:#0057B8;color:#fff}
+#cartBar{position:fixed;bottom:0;left:0;right:0;background:#111;color:#fff;padding:14px;max-width:520px;margin:auto;border-radius:18px 18px 0 0;display:none;z-index:99}
+#cartBar b{font-size:17px}
+#cartBar button{background:#25D366;color:#fff;border:none;padding:10px 18px;border-radius:10px;font-weight:bold}
+#homeFields{display:none}
+#imgPreview{width:100%;border-radius:10px;margin-top:8px;display:none}
+.home-btn{width:100%;padding:18px;border:0;border-radius:16px;font-size:20px;font-weight:bold;color:#fff;margin-bottom:12px;cursor:pointer}
+.btn-offers{background:#FF7A00}
+.btn-book{background:#0057B8}
+.btn-result{background:#16a34a}
+.btn-why{background:#7c3aed !important;color:#fff !important}
+.btn-back{width:100%;padding:12px;background:#64748b;color:#fff;border:0;border-radius:12px;font-weight:bold;margin-top:10px}
+.offer{border:2px dashed #FF7A00;padding:12px;border-radius:12px;margin:10px 0;background:#FFF7ED}
+</style>
+</head>
+<body>
+<div class="top">
+<h1>🔬 تحليلك</h1>
+<p>دقة - سرعة - سحب من البيت أو المعمل</p>
+<div class="badge">⭐ أكثر من 400 تحليل - أسعار معمل مباشرة</div>
+</div>
+
+<!-- الشاشة الرئيسية -->
+<div id="homePage" style="max-width:520px;margin:0 auto;padding:12px">
+<button class="home-btn btn-offers" onclick="showPage('offersPage')">🎁 عروض وخصومات</button>
+<button class="home-btn btn-book" onclick="showPage('bookingPage')">🧪 طلب تحليل</button>
+<button class="home-btn btn-result" onclick="showPage('resultsPage')">📄 استلام النتايج</button>
+<button class="home-btn btn-why" onclick="showPage('whyPage')">⭐ ليه تختار معملنا؟</button>
+<div class="card" style="text-align:center">📞 الحامول - كفر الشيخ<br><small style="color:#666">للحجز والاستفسار - واتساب 01097330585</small></div>
+<div style="text-align:center"><a href="#" onclick="openAdmin();return false;" style="color:#999;font-size:12px">دخول الأدمن</a></div>
+</div>
+
+<!-- صفحة الحجز -->
+<div id="bookingPage" style="display:none">
+  <div class="wrap">
+<div class="card">
+<h3>📋 بيانات الحجز</h3>
+<label>اسم المريض *</label>
+<input id="pName" placeholder="اكتب الاسم ثلاثي">
+<div class="row2">
+<div><label>رقم الموبايل *</label><input id="pPhone" type="tel" placeholder="01xxxxxxxxx"></div>
+<div><label>السن</label><input id="pAge" type="number" placeholder="30"></div>
+</div>
+<label>النوع</label>
+<div class="opt" id="genderOpt">
+<button type="button" onclick="selOpt(this,'genderOpt')">👨<br>ذكر</button>
+<button type="button" onclick="selOpt(this,'genderOpt')">👩<br>أنثى</button>
+</div>
+<label>اسم الطبيب (اختياري)</label>
+<input id="pDoctor" placeholder="اسم الدكتور">
+<label>فين السحب؟ *</label>
+<div class="opt" id="placeOpt">
+<button type="button" class="active" onclick="selPlace(this,'معمل')">🏥<br>هاجي المعمل</button>
+<button type="button" onclick="selPlace(this,'بيت')">🏠<br>من البيت</button>
+</div>
+<div id="homeFields">
+<label>العنوان بالتفصيل *</label>
+<textarea id="pAddress" rows="2" placeholder="المنطقة - الشارع - العمارة - الدور - الشقة"></textarea>
+<button class="btn-gps" type="button" onclick="getGPS()">📍 حدد موقعي من GPS</button>
+<input id="pGPS" placeholder="رابط الموقع هيظهر هنا" readonly>
+<p style="color:#d00;font-size:13px">+ رسوم زيارة منزلية: 50 جنيه</p>
+</div>
+<div class="row2">
+<div><label>اليوم</label><select id="pDay"><option>اليوم</option><option>بكرة</option><option>بعد بكرة</option></select></div>
+<div><label>الساعة</label><select id="pTime"><option>9 صباحا</option><option>12 الضهر</option><option>3 العصر</option><option>5 المغرب</option><option>8 بالليل</option></select></div>
+</div>
+<label>طريقة الدفع</label>
+<div class="opt pay" id="payOpt">
+<button type="button" class="active" onclick="selOpt(this,'payOpt')">💵<br>نقدي</button>
+<button type="button" onclick="selOpt(this,'payOpt')">📱<br>انستا باي</button>
+<button type="button" onclick="selOpt(this,'payOpt')">📲<br>فودافون كاش</button>
+</div>
+<label>ارفع صورة (روشتة / تحليل قديم)</label>
+<input type="file" id="pImg" accept="image/*" style="display:none" onchange="showImg(this)">
+<button class="btn-img" type="button" onclick="document.getElementById('pImg').click()">📷 ارفع صورة من المعرض</button>
+<img id="imgPreview">
+<label>ملحوظة</label>
+<input id="pNote" placeholder="صايم؟ عندك سكر؟ اي ملحوظة...">
+</div>
+
+<div class="card">
+<h3>🔍 اختار تحاليلك</h3>
+<input id="search" placeholder="🔍 دور على تحليل... مثال: سكر، فيتامين د" oninput="render()">
+<p id="count" style="text-align:center;color:#666;font-size:13px"></p>
+<div class="cat" id="cats"></div>
+<div id="tests"></div>
+</div>
+</div>
+</div>
+
+<!-- صفحة العروض -->
+<div id="offersPage" style="display:none;max-width:520px;margin:0 auto;padding:12px">
+<div class="card"><h3>🎁 عروض وخصومات</h3><div id="offersList"></div></div>
+<button class="btn-back" onclick="showPage('homePage')">⬅ رجوع للرئيسية</button>
+</div>
+
+<!-- صفحة النتايج -->
+<div id="resultsPage" style="display:none;max-width:520px;margin:0 auto;padding:12px">
+<div class="card"><h3>📄 استلام النتايج</h3><p>ادخل الكود الخاص بيك</p><input id="codeInput" placeholder="مثال: 1234"><button class="home-btn btn-result" onclick="getResult()">عرض النتيجة</button><div id="resultBox"></div></div>
+<button class="btn-back" onclick="showPage('homePage')">⬅ رجوع للرئيسية</button>
+</div>
+
+<!-- صفحة الأدمن -->
+<div id="adminPage" style="display:none;max-width:520px;margin:0 auto;padding:12px">
+  <div class="card" style="background:#fff3cd; border:1px solid #ffc107;">
+  <h3>🔐 تغيير باسورد الادمن</h3>
+  <input id="newPassInput" type="text" placeholder="اكتب الباسورد الجديد هنا" style="width:100%; padding:12px; border:1px solid #ccc; border-radius:8px; font-size:16px; margin-bottom:10px; box-sizing:border-box;">
+  <button class="home-btn btn-book" onclick="changeAdminPass()" style="width:100%; padding:12px; font-size:16px; font-weight:bold;">حفظ الباسورد الجديد</button>
+</div>
+<div class="card">
+<h3>➕ إضافة تحليل جديد</h3>
+<input id="newTestName" placeholder="اسم التحليل">
+<input id="newTestPrice" type="number" placeholder="السعر بالجنيه">
+<input id="newTestNote" placeholder="الشروط / الصيام (اختياري)">
+  <input id="newTestCondition" placeholder="شروط التحليل (مثال: صيام 8 ساعات)">
+<button class="home-btn btn-book" onclick="addTestFromAdmin()">إضافة التحليل</button>
+</div>
+<div class="card">
+<h3>📋 تعديل / حذف التحاليل</h3>
+<div id="adminTestsList"></div>
+</div>
+<div class="card">
+<h3>⚙️ الأدمن - عروض</h3>
+<input id="offerTitle" placeholder="عنوان العرض">
+<textarea id="offerDesc" placeholder="تفاصيل العرض"></textarea>
+<input type="file" id="offerImg" accept="image/*" onchange="previewOfferImg(this)">
+<img id="offerPreview" style="width:100%;border-radius:12px;margin-top:10px;display:none">
+<button class="home-btn btn-offers" onclick="addOffer()">إضافة العرض</button>
+<div id="adminOffers"></div>
+</div>
+<div class="card">
+<h3>📄 الأدمن - نتايج</h3>
+<input id="resCode" placeholder="كود المريض">
+<input id="resName" placeholder="اسم المريض">
+<input id="resLink" placeholder="رابط ملف PDF من جوجل درايف">
+<button class="home-btn btn-result" onclick="addResult()">حفظ النتيجة</button>
+</div>
+<button class="btn-back" onclick="showPage('homePage')">⬅ رجوع للرئيسية</button>
+</div>
+
+<!-- ليه تختار معملنا -->
+<div id="whyPage" style="display:none;max-width:520px;margin:0 auto;padding:12px">
+<div class="card" style="text-align:center;padding:20px">
+<div style="background:#dcfce7;color:#166534;padding:6px 12px;border-radius:20px;display:inline-block;font-weight:bold;font-size:13px">🎖️ إشراف طبي واستشاري كامل</div>
+<h3 style="margin:12px 0 8px;font-size:22px">د. السيد عبدالفتاح الشافعي</h3>
+<p style="color:#444;line-height:1.8;font-size:14px">تحت إشراف د. السيد عبدالفتاح الشافعي - أخصائي مختبرات طبية<br>- بكالوريوس علوم طبية تطبيقية جامعة بني سويف<br>- دبلومة الكيمياء الحيوية الطبية جامعة المنصورة</p>
+<a href="https://wa.me/201097330585" style="background:#16a34a;color:#fff;padding:10px 18px;border-radius:10px;display:inline-block;text-decoration:none;font-weight:bold;margin-top:8px">💬 استشير الدكتور واتساب</a>
+</div>
+<div class="card" style="text-align:center"><h3>⭐ ليه تختار معمل الحامول؟</h3><p><b>معمل تحليلك - الحامول</b><br>صحتك أمانة عندنا، ودقتنا هي اللي بتخلينا اختيارك الأول في الحامول وكفر الشيخ.</p></div>
+<button class="btn-back" onclick="showPage('homePage')">⬅ رجوع للرئيسية</button>
+</div>
+
+<div id="cartBar">
+<div style="display:flex;justify-content:space-between;align-items:center">
+<div><b id="cartText">الاجمالي: 0 جنيه</b><br><small id="cartCount">0 تحليل</small></div>
+<button onclick="sendWA()">🟢 احجز على واتساب</button>
+</div>
+</div>
+
+<script>
+// ===== مصفوفة التحاليل بصيغة Object الموحدة =====
+let defaultTests = [
+  {name: "تحليل كرونز", price: 800, note: "لا يحتاج صيام - عينة براز", cat: "بول وبراز"},
+  {name: "تحليل القولون التقرحي", price: 800, note: "لا يحتاج صيام - عينة براز", cat: "بول وبراز"},
+  {name: "صورة دم كاملة CBC", price: 180, note: "لا يحتاج صيام", cat: "أخرى"},
+  {name: "هيموجلوبين Hb", price: 80, note: "لا يحتاج صيام", cat: "أخرى"},
+  {name: "مقاومة الأنسولين HOMA", price: 450, note: "صيام 8 ساعات - مسموح بالمياه فقط", cat: "سكر"},
+  {name: "تحليل الدهون الكاملة Lipid Profile", price: 350, note: "صيام 12 ساعة - مسموح بالمياه فقط", cat: "قلب ودهون"},
+  {name: "تحليل فيتامين D3", price: 500, note: "لا يحتاج صيام", cat: "فيتامينات ومعادن"},
+  {name: "تحليل هرمون الحليب", price: 250, note: "صباحاً - تجنب التوتر والجماع قبل التحليل", cat: "هرمونات"}
+];
+
+let tests = [];
+try {
+  let saved = localStorage.getItem('tests');
+  if(saved) {
+    let parsed = JSON.parse(saved);
+    if(Array.isArray(parsed) && parsed.length > 0) {
+      tests = parsed.map(t => {
+        if(Array.isArray(t)) {
+          return { name: t[0], price: Number(t[1]) || 0, note: t[2] || '', cat: 'أخرى' };
+        }
+        return { name: t.name || t[0], price: Number(t.price || t[1]) || 0, note: t.note || t[2] || '', cat: t.cat || 'أخرى' };
+      });
+    } else {
+      tests = defaultTests;
+    }
+  } else {
+    tests = defaultTests;
+  }
+} catch(e) {
+  tests = defaultTests;
+}
+
+let cart = []; 
+let place = "معمل", gender = "", pay = "نقدي";
+let activeCat = "الكل";
+
+// دوال مساعدة موحدة لتعريفات التحليل
+function getName(t){ return t.name || t[0] || ''; }
+function getPrice(t){ return Number(t.price || t[1]) || 0; }
+function getOldPrice(t){ return Number(t.oldPrice || t[2]) || 0; }
+function getCat(t){ return t.cat || t[3] || 'أخرى'; }
+function getNote(t){ return t.note || t.desc || t[4] || ''; }
+function saveTests(){
+try{localStorage.setItem('tests', JSON.stringify(tests));}catch(e){}
+fetch('https://script.google.com/macros/s/AKfycbyUrBfhbZHIfiRCrfFIsIkurFsDfeyCS5tVfFblHu3-BXs_aWXAAQKKdElt6BgkoXpA/exec', {method:'POST', mode:'no-cors', body: JSON.stringify({action:'saveAllTests', tests: tests})});
+}
+
+function renderCats(){
+  let cats = ["الكل","سكر","فيتامينات ومعادن","هرمونات","كبد","كلى","قلب ودهون","عدوى وفيروسات","حمل","بول وبراز","أخرى"];
+  let catsEl = document.getElementById('cats');
+  if(catsEl) {
+    catsEl.innerHTML = cats.map(c=>`<button class="${c==activeCat?'active':''}" onclick="activeCat='${c}';renderCats();render()">${c}</button>`).join('');
+  }
+}
+
+function render(){
+  let q = (document.getElementById('search')?.value || "").toLowerCase().trim();
+  let list = tests.filter(t=>{
+    let n = getName(t);
+    let okCat = activeCat=="الكل" || getCat(t)==activeCat;
+    let okSearch = !q || n.toLowerCase().includes(q);
+    return okCat && okSearch;
+  });
+  
+  let countEl = document.getElementById('count');
+  if(countEl) countEl.innerText = list.length + " تحليل - من إجمالي " + tests.length;
+  
+  let testsEl = document.getElementById('tests');
+  if(testsEl) {
+    testsEl.innerHTML = list.map((t)=>{
+      let originalIdx = tests.indexOf(t);
+      let inCart = cart.includes(originalIdx);
+      return `<div class="test"><div><b>${getName(t)}</b><br><small style="color:#666">${getNote(t)}</small><br><span class="price">${getPrice(t)} ج.م</span></div><button class="add ${inCart?'selected':''}" onclick="addToCart(${originalIdx})">${inCart?'✓ تم':' + اضافة'}</button></div>`;
+    }).join('');
+  }
+}
+
+function addToCart(idx){
+  let pos = cart.indexOf(idx);
+  if(pos > -1) cart.splice(pos, 1); 
+  else cart.push(idx);
+  render(); 
+  updateCart();
+}
+
+function updateCart(){
+  let total = cart.reduce((s,idx)=>s + getPrice(tests[idx]), 0);
+  total += (place=='بيت' ? 50 : 0);
+  let bar = document.getElementById('cartBar');
+  if(cart.length > 0){ if(bar) bar.style.display='block'; } 
+  else { if(bar) bar.style.display='none'; }
+  
+  let cartText = document.getElementById('cartText');
+  let cartCount = document.getElementById('cartCount');
+  if(cartText) cartText.innerText = "الاجمالي: " + total + " جنيه" + (place=='بيت' ? " (شامل 50 زيارة)" : "");
+  if(cartCount) cartCount.innerText = cart.length + " تحليل مختار";
+}
+
+function selOpt(btn, id){
+  document.querySelectorAll('#'+id+' button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  if(id=='genderOpt') gender = btn.innerText.replace(/\n/g,' ');
+  if(id=='payOpt') pay = btn.innerText.replace(/\n/g,' ');
+}
+
+// دالة selPlace الموحدة والمطلوبة
+function selPlace(btn, val){
+  document.querySelectorAll('#placeOpt button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active'); 
+  place = val;
+  let homeFields = document.getElementById('homeFields');
+  if(homeFields) {
+    homeFields.style.display = (val == 'بيت') ? 'block' : 'none';
+  }
+  updateCart();
+}
+
+function getGPS(){
+  if(!navigator.geolocation){ alert('GPS مش شغال'); return; }
+  let pGPS = document.getElementById('pGPS');
+  if(pGPS) pGPS.value = 'جاري تحديد الموقع...';
+  navigator.geolocation.getCurrentPosition(p=>{
+    if(pGPS) pGPS.value = 'https://maps.google.com/?q='+p.coords.latitude+','+p.coords.longitude;
+  },()=>{ alert('اسمح للموقع من المتصفح'); });
+}
+
+function showImg(inp){
+  if(inp.files && inp.files[0]){
+    let r = new FileReader();
+    r.onload = e => {
+      let im = document.getElementById('imgPreview');
+      if(im){ im.src = e.target.result; im.style.display = 'block'; }
+    };
+    r.readAsDataURL(inp.files[0]);
+  }
+}
+
+function sendWA(){
+  let name = document.getElementById('pName')?.value;
+  let phone = document.getElementById('pPhone')?.value;
+  if(!name || !phone){ alert('اكتب الاسم ورقم الموبايل الأول'); return; }
+  if(cart.length == 0){ alert('اختار تحليل واحد على الأقل'); return; }
+  let cartText = cart.map(idx=>getName(tests[idx])+" ("+getPrice(tests[idx])+"ج)").join(' - ');
+  let total = cart.reduce((s,idx)=>s + getPrice(tests[idx]), 0) + (place=='بيت'?50:0);
+  let data = {
+    name: name, phone: phone,
+    age: document.getElementById('pAge')?.value||'---',
+    gender: gender||'---',
+    doctor: document.getElementById('pDoctor')?.value||'بدون',
+    place: place=='بيت'?'سحب من البيت':'هيجي المعمل',
+    address: document.getElementById('pAddress')?.value||'---',
+    gps: document.getElementById('pGPS')?.value||'---',
+    day: document.getElementById('pDay')?.value||'',
+    time: document.getElementById('pTime')?.value||'',
+    pay: pay, tests: cartText, total: total,
+    note: document.getElementById('pNote')?.value||'لا يوجد'
+  };
+fetch('https://script.google.com/macros/s/AKfycbw461iFEFsX3tH-zeCPHW-fCMcDF3nGbDFdK63sc2cVaujSpD6EpAu5B0GC6IFucv0o/exec', {method:'POST', mode:'no-cors', body: JSON.stringify(data)});
+  let msg = '*حجز جديد من تحليلك*\n👤 الاسم: '+data.name+'\n📞 الموبايل: '+data.phone+'\n🎂 السن: '+data.age+'\n⚧ النوع: '+data.gender+'\n👨‍⚕️ الدكتور: '+data.doctor+'\n📍 المكان: '+data.place+'\n🏠 العنوان: '+data.address+'\n📌 GPS: '+data.gps+'\n📅 اليوم: '+data.day+' - '+data.time+'\n💳 الدفع: '+data.pay+'\n🧪 التحاليل: '+data.tests+'\n💰 الاجمالي: '+data.total+' جنيه\n📝 ملحوظة: '+data.note;
+  window.open('https://wa.me/201097330585?text='+encodeURIComponent(msg),'_blank');
+  alert('تم تأكيد الحجز ✅ هنكلمك للتأكيد');
+}
+
+function showPage(id){
+  ['homePage','bookingPage','offersPage','resultsPage','adminPage','whyPage'].forEach(x=>{
+    let el = document.getElementById(x); 
+    if(el) el.style.display = (x==id ? 'block' : 'none');
+  });
+  let cartBar = document.getElementById('cartBar');
+  if(cartBar) cartBar.style.display = 'none';
+  if(id=='bookingPage') updateCart();
+  if(id=='offersPage'||id=='adminPage') renderOffers();
+  window.scrollTo(0,0);
+}
+
+function getOffers(){
+  return JSON.parse(localStorage.getItem('offers')||'[{"title":"خصم 30% على فيتامين د","desc":"العرض ساري حتى نهاية الشهر"}]');
+}
+
+function renderOffers(){
+  let offers = getOffers();
+  let offersList = document.getElementById('offersList');
+  let adminOffers = document.getElementById('adminOffers');
+  if(offersList) offersList.innerHTML = offers.map(o=>`<div class="offer">${o.img ? `<img src="${o.img}" style="width:100%;height:180px;object-fit:cover;border-radius:10px;margin-bottom:8px">` : ''}<b>${o.title}</b><br>${o.desc}</div>`).join('')||'<p>لا توجد عروض حاليا</p>';
+  if(adminOffers) adminOffers.innerHTML = offers.map((o,i)=>`<div class="offer">${o.img ? `<img src="${o.img}" style="width:100%;height:180px;object-fit:cover;border-radius:10px;margin-bottom:8px">` : ''}<b>${o.title}</b><br>${o.desc}<br><button onclick="delOffer(${i})">حذف</button></div>`).join('');
+}
+function previewOfferImg(input){
+  let file = input.files[0];
+  if(!file) return;
+  let r = new FileReader();
+  r.onload = function(e){
+    document.getElementById('offerPreview').src = e.target.result;
+  };
+  r.readAsDataURL(file);
+}
+function addOffer(){
+  let t = document.getElementById('offerTitle')?.value;
+  let d = document.getElementById('offerDesc')?.value;
+  if(!t) return alert('اكتب عنوان العرض');
+  let file = document.getElementById('offerImg')?.files[0];
+
+  function save(imgData){
+    let o = getOffers();
+    o.push({title:t, desc:d, img:imgData || ''});
+    localStorage.setItem('offers', JSON.stringify(o));
+    if(document.getElementById('offerTitle')) document.getElementById('offerTitle').value = '';
+    if(document.getElementById('offerDesc')) document.getElementById('offerDesc').value = '';
+    if(document.getElementById('offerImg')) document.getElementById('offerImg').value = '';
+    if(document.getElementById('offerPreview')) document.getElementById('offerPreview').src = '';
+    alert('تم إضافة العرض');
+    renderOffers();
+  }
+
+  if(file){
+    let r = new FileReader();
+    r.onload = function(e){ save(e.target.result); };
+    r.readAsDataURL(file);
+  } else {
+    save('');
+  }
+}
+function delOffer(i){
+  let o = getOffers(); 
+  o.splice(i,1); 
+  localStorage.setItem('offers', JSON.stringify(o)); 
+  renderOffers();
+}
+
+function checkAdmin(){
+  let pass = prompt('اكتب باسورد الأدمن:');
+  if(pass === '97330585s'){
+    showPage('adminPage');
+  } else if(pass !== null) {
+    alert('الباسورد غلط');
+  }
+}
+
+function addResult(){
+  let c = document.getElementById('resCode')?.value.trim();
+  let n = document.getElementById('resName')?.value.trim();
+  let l = document.getElementById('resLink')?.value.trim();
+  if(!c || !l) return alert('اكتب الكود ورابط PDF');
+  let all = JSON.parse(localStorage.getItem('results')||'{}');
+  all[c] = {name: n, link: l};
+  localStorage.setItem('results', JSON.stringify(all));
+  alert('تم حفظ النتيجة للكود: '+c);
+}
+
+function getResult(){
+  let c = document.getElementById('codeInput')?.value.trim();
+  let all = JSON.parse(localStorage.getItem('results')||'{}');
+  let resBox = document.getElementById('resultBox');
+  if(all[c]){
+    if(resBox) resBox.innerHTML = `<div class="offer"><b>أهلا ${all[c].name}</b><br><br><a href="${all[c].link}" target="_blank" style="background:#16a34a;color:white;padding:12px;border-radius:10px;display:block;text-align:center;text-decoration:none">📥 تحميل نتيجتك PDF</a></div>`;
+  } else {
+    if(resBox) resBox.innerHTML = "<p style='color:red'>الكود غير صحيح</p>";
+  }
+}
+
+// === دورات الأدمن المطلوب إصلاحها وإضافتها ===
+function renderTests(){
+  let el = document.getElementById('tests'); 
+  if(!el) return;
+  let q = (document.getElementById('search')?.value || '').toLowerCase();
+  let html = '';
+  tests.forEach(function(t, i){
+    let n = getName(t), p = getPrice(t), note = getNote(t);
+    if(q && !n.toLowerCase().includes(q)) return;
+    let inCart = cart.includes(i);
+    html += `<div class="test">
+      <div><b>${n}</b><br><small style="color:#666">${note}</small>${(t.condition||t.cond)?`<br><small style="color:#b45309">⚠️ شروط: ${t.condition||t.cond}</small>`:''}<br><span class="price">${p} ج.م</span></div>
+      <button class="add ${inCart?'selected':''}" onclick="addToCart(${i})">${inCart?'✓ تم':' + اضافة'}</button>
+    </div>`;
+  });
+  el.innerHTML = html || '<p style="text-align:center">لا توجد تحاليل مطابقة</p>';
+  let countEl = document.getElementById('count'); 
+  if(countEl) countEl.innerText = tests.length + ' تحليل';
+}
+
+function renderAdminTests(){
+  let el = document.getElementById('adminTestsList'); 
+  if(!el) return;
+  let html = '';
+  tests.forEach(function(t, i){
+    let n = getName(t), p = getPrice(t), note = getNote(t);
+    html += `<div style="border:1px solid #ddd;border-radius:10px;padding:10px;margin:6px 0;background:#f9f9f9">
+      <input id="an${i}" value="${n}" placeholder="اسم التحليل" style="width:100%;padding:6px;margin:2px 0">
+      <input id="ap${i}" type="number" value="${p}" placeholder="السعر" style="width:48%;padding:6px"> 
+      <input id="ac${i}" value="${note}" placeholder="الشروط / الصيام" style="width:48%;padding:6px">
+      <div style="margin-top:6px;display:flex;gap:6px">
+        <button onclick="saveOneTest(${i})" style="flex:1;background:#0d6efd;color:white;border:none;padding:7px;border-radius:8px">💾 حفظ</button>
+        <button onclick="delTest(${i})" style="flex:1;background:#dc3545;color:white;border:none;padding:7px;border-radius:8px">🗑️ حذف</button>
+      </div>
+    </div>`;
+  });
+  el.innerHTML = html || '<p>لا توجد تحاليل</p>';
+}
+function loadTestsFromSheet(){
+  fetch('https://script.google.com/macros/s/AKfycbziDNh9aBdHzbmXiSosgvlYgYjoM5vvtwky6ZcSsGNsXEFRFZ9J52uo_DTJ9szF9aYj/exec').then(r=>r.json()).then(data=>{
+    if(data && data.length){
+      tests = data;
+      localStorage.setItem('tests', JSON.stringify(tests));
+      renderTests();
+    }
+  }).catch(e=>{});
+}
+  loadTestsFromSheet();
+function saveOneTest(i){
+  let nameVal = document.getElementById('an'+i)?.value || '';
+  let priceVal = document.getElementById('ap'+i)?.value || 0;
+  let noteVal = document.getElementById('ac'+i)?.value || '';
+  tests[i] = {name: nameVal, price: Number(priceVal), note: noteVal, cat: getCat(tests[i])};
+  saveTests(); 
+  renderTests(); 
+  renderAdminTests(); 
+  alert('تم الحفظ ✅');
+}
+
+function delTest(i){
+  if(!confirm('تحذف '+getName(tests[i])+' ؟')) return;
+  tests.splice(i, 1); 
+  saveTests(); 
+  renderTests(); 
+  renderAdminTests();
+}
+
+function addTestFromAdmin(){
+  let n = document.getElementById('newTestName')?.value.trim();
+  let p = document.getElementById('newTestPrice')?.value;
+  let note = document.getElementById('newTestNote')?.value.trim() || 'لا يحتاج صيام';
+  let cond = document.getElementById('newTestCondition')?.value || '';
+  if(!n || !p) return alert('اكتب الاسم والسعر');
+  tests.push({name: n, price: Number(p), note: note, condition: cond, cat: 'أخرى'});
+  saveTests(); 
+  renderTests(); 
+  renderAdminTests();
+  document.getElementById('newTestName').value = ''; 
+  document.getElementById('newTestPrice').value = ''; 
+  if(document.getElementById('newTestNote')) document.getElementById('newTestNote').value = '';
+if(document.getElementById('newTestCondition')) document.getElementById('newTestCondition').value = '';
+  alert('تمت الإضافة ✅');
+}
+
+// استدعاء الدوال بعد 400ms في نهاية الملف قبل </body>
+setTimeout(function(){
+  renderCats();
+  renderTests();
+  renderAdminTests();
+}, 400);
+</script>
+  <script>
+// إصلاح مودال دخول الأدمن - بزرار موافق
+function openAdmin(){
+  var old = document.getElementById('adminLoginModal');
+  if(old) old.remove();
+  var div = document.createElement('div');
+  div.id = 'adminLoginModal';
+  div.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:99999';
+  div.innerHTML = '<div style="background:white;width:90%;max-width:320px;padding:20px;border-radius:14px;text-align:center">'
+    + '<h3>🔐 دخول الأدمن</h3>'
+    + '<input id="adminPassInput" type="password" placeholder="اكتب الباسورد" style="width:100%;padding:12px;margin:12px 0;border:1px solid #ddd;border-radius:10px;font-size:16px">'
+    + '<button onclick="checkAdminPass()" style="width:100%;background:#0d6efd;color:white;border:none;padding:12px;border-radius:10px;font-size:16px;font-weight:bold">موافق - دخول ✅</button>'
+    + '<button onclick="document.getElementById(\'adminLoginModal\').remove()" style="width:100%;background:#eee;border:none;padding:10px;border-radius:10px;margin-top:8px">إلغاء</button></div>';
+  document.body.appendChild(div);
+  setTimeout(function(){ document.getElementById('adminPassInput').focus(); }, 100);
+  document.getElementById('adminPassInput').onkeydown = function(e){ if(e.key==='Enter') checkAdminPass(); };
+}
+function checkAdminPass(){
+  var v = document.getElementById('adminPassInput').value;
+localStorage.setItem('adminPass', '97330585');
+var correct = localStorage.getItem('adminPass') || '97330585';
+  if(v === correct){
+    document.getElementById('adminLoginModal').remove();
+    // افتح صفحة الأدمن
+    if(typeof showPage === 'function') showPage('adminPage');
+    var ap = document.getElementById('adminPage'); if(ap) ap.style.display='block';
+    if(typeof renderAdminTests === 'function') renderAdminTests();
+    alert('أهلا بيك يا أدمن ✅');
+  } else {
+    alert('الباسورد غلط ❌');
+  }
+}
+// خلي أي زرار أدمن قديم يفتح المودال الجديد
+document.addEventListener('click', function(e){
+  if(e.target && (e.target.innerText || '').includes('أدمن')){
+    // لو المودال مش موجود، افتحه
+    if(!document.getElementById('adminLoginModal') && !document.getElementById('adminPage')?.offsetParent){
+      // متفتحش مرتين لو هو أصلا في صفحة الأدمن
+    }
+  }
+});
+</script>
+<script>
+// إصلاح مودال دخول الأدمن - بزرار موافق
+function openAdmin(){
+  var old = document.getElementById('adminLoginModal');
+  if(old) old.remove();
+  var div = document.createElement('div');
+  div.id = 'adminLoginModal';
+  div.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:99999';
+  div.innerHTML = '<div style="background:white;width:90%;max-width:320px;padding:20px;border-radius:14px;text-align:center">'
+    + '<h3>🔐 دخول الأدمن</h3>'
+    + '<input id="adminPassInput" type="password" placeholder="اكتب الباسورد" style="width:100%;padding:12px;margin:12px 0;border:1px solid #ddd;border-radius:10px;font-size:16px">'
+    + '<button onclick="checkAdminPass()" style="width:100%;background:#0d6efd;color:white;border:none;padding:12px;border-radius:10px;font-size:16px;font-weight:bold">موافق - دخول ✅</button>'
+    + '<button onclick="document.getElementById(\'adminLoginModal\').remove()" style="width:100%;background:#eee;border:none;padding:10px;border-radius:10px;margin-top:8px">إلغاء</button></div>';
+  document.body.appendChild(div);
+  setTimeout(function(){ document.getElementById('adminPassInput').focus(); }, 100);
+  document.getElementById('adminPassInput').onkeydown = function(e){ if(e.key==='Enter') checkAdminPass(); };
+}
+function checkAdminPass(){
+  var v = document.getElementById('adminPassInput').value;
+  var correct = localStorage.getItem('adminPass2') || localStorage.getItem('adminPass') || '97330585';
+  if(v === correct){
+    document.getElementById('adminLoginModal').remove();
+    // افتح صفحة الأدمن
+    if(typeof showPage === 'function') showPage('adminPage');
+    var ap = document.getElementById('adminPage'); if(ap) ap.style.display='block';
+    if(typeof renderAdminTests === 'function') renderAdminTests();
+    alert('أهلا بيك يا أدمن ✅');
+  } else {
+    alert('الباسورد غلط ❌');
+  }
+}
+
+function changeAdminPass(){
+  var np = document.getElementById('newPassInput').value.trim();
+  if(np.length < 4){
+    alert('الباسورد لازم يكون 4 ارقام على الاقل');
+    return;
+  }
+  localStorage.setItem('adminPass2', np);
+  localStorage.setItem('adminPass', np);
+  alert('تم تغيير الباسورد بنجاح لـ: ' + np);
+  document.getElementById('newPassInput').value = '';
+}
+// خلي أي زرار أدمن قديم يفتح المودال الجديد
+document.addEventListener('click', function(e){
+  if(e.target && (e.target.innerText || '').includes('أدمن')){
+    // لو المودال مش موجود، افتحه
+    if(!document.getElementById('adminLoginModal') && !document.getElementById('adminPage')?.offsetParent){
+      // متفتحش مرتين لو هو أصلا في صفحة الأدمن
+    }
+  }
+});
+</script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script>
+// ===== ربط السحابة - بدون تغيير أي حاجة تانية =====
+try{
+const fbConfig = {
+  apiKey: "AIzaSyCE7EQ-qYNnhBeUMyab3m41M",
+  authDomain: "tahleelak-pro.firebaseapp.com",
+  projectId: "tahleelak-pro",
+  storageBucket: "tahleelak-pro.firebasestorage.app",
+  messagingSenderId: "134740939008",
+  appId: "1:134740939008:web:d65f3d616db43ec3ea3e5",
+  measurementId: "G-66SS67BDKD"
+};
+if(!firebase.apps.length) firebase.initializeApp(fbConfig);
+const db = firebase.firestore();
+const cloudDoc = db.collection('tahleelak').doc('appData');
+let cloudReady = false;
+let isFromCloud = false;
+
+// حفظ في السحابة + في الموبايل كنسخة احتياطية
+function saveToCloud(){
+  try{
+    let offers = JSON.parse(localStorage.getItem('offers')||'[]');
+    let results = JSON.parse(localStorage.getItem('results')||'{}');
+    cloudDoc.set({tests: tests, offers: offers, results: results, updatedAt: Date.now()}, {merge:true});
+  }catch(e){}
+}
+
+// استقبال التحديثات من السحابة لحظيا لكل العملاء
+cloudDoc.onSnapshot((doc)=>{
+  if(!doc.exists) { cloudReady = true; saveToCloud(); return; }
+  let d = doc.data();
+  if(!d) return;
+  isFromCloud = true;
+  if(d.tests && Array.isArray(d.tests) && d.tests.length){
+    tests = d.tests;
+    try{ localStorage.setItem('tests', JSON.stringify(tests)); }catch(e){}
+  }
+  if(d.offers) try{ localStorage.setItem('offers', JSON.stringify(d.offers)); }catch(e){}
+  if(d.results) try{ localStorage.setItem('results', JSON.stringify(d.results)); }catch(e){}
+  try{ render(); renderTests(); renderAdminTests(); renderOffers(); }catch(e){}
+  isFromCloud = false;
+  cloudReady = true;
+});
+
+// غلف دوال الحفظ القديمة عشان تحفظ في السحابة كمان
+let _oldSaveTests = saveTests;
+saveTests = function(){
+  _oldSaveTests();
+  saveToCloud();
+};
+let _oldAddOffer = addOffer;
+let _oldDelOffer = delOffer;
+let _oldAddResult = addResult;
+// بعد أي إضافة عرض أو نتيجة، احفظ في السحابة بعد ثانية
+setInterval(()=>{ if(cloudReady) saveToCloud(); }, 15000);
+console.log('Cloud sync ON ✅');
+}catch(e){ console.log('Cloud error', e); }
+</script>
+  <!-- زرار الرجوع للرئيسية -->
+<button id="backHomeBtn" onclick="goHome()">⬅ الرجوع للرئيسية</button>
+
+<style>
+#backHomeBtn{
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 9999;
+  background: #0d6efd;
+  color: #fff;
+  border: none;
+  padding: 12px 18px;
+  border-radius: 50px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+}
+#backHomeBtn:active{ transform: scale(0.95); }
+</style>
+
+<script>
+function goHome(){
+  // لو الموقع صفحة واحدة وبتخفي وتظهر الأقسام
+  var home = document.getElementById('home') || document.getElementById('main') || document.querySelector('.home');
+  if(home){
+    document.querySelectorAll('section, .page, .screen').forEach(function(s){ s.style.display = 'none'; });
+    home.style.display = 'block';
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  } else {
+    // لو الموقع كذا صفحة
+    window.location.href = 'index.html';
+  }
+}
+// --- توليد كود فريد + واتساب ---
+(function(){
+function getInputs(){
+  let inputs = document.querySelectorAll('input');
+  let codeInput = null, nameInput = null;
+  inputs.forEach(inp => {
+    let ph = (inp.placeholder || '').toLowerCase();
+    let id = (inp.id || '').toLowerCase();
+    if(ph.includes('كود') || id.includes('code')) codeInput = inp;
+    if(ph.includes('اسم المريض') || id.includes('name')) nameInput = inp;
+  });
+  return {codeInput, nameInput};
+}
+function generateUniqueCode(){
+  let now = Date.now().toString().slice(-5);
+  let rand = Math.floor(100 + Math.random()*900);
+  return 'TAH' + now + rand;
+}
+let btns = document.querySelectorAll('button');
+let saveBtn = null;
+btns.forEach(b => { if(b.textContent.includes('حفظ النتيجة')) saveBtn = b; });
+if(saveBtn && !document.getElementById('genCodeBtn')){
+  let div = document.createElement('div');
+  div.style.cssText = 'display:flex;gap:10px;margin-top:12px';
+  div.innerHTML = '<button id="genCodeBtn" type="button" style="flex:1;background:#0ea5e9;color:#fff;border:none;padding:12px;border-radius:12px;font-weight:700">🎲 توليد كود تلقائي</button><button id="waSendBtn" type="button" style="flex:1;background:#25D366;color:#fff;border:none;padding:12px;border-radius:12px;font-weight:700">📱 إرسال واتساب</button>';
+  saveBtn.after(div);
+  document.getElementById('genCodeBtn').onclick = function(){
+    let {codeInput} = getInputs();
+    let newCode = generateUniqueCode();
+    if(codeInput){ codeInput.value = newCode; }
+    alert('الكود الجديد: ' + newCode + ' ✅');
+  };
+  document.getElementById('waSendBtn').onclick = function(){
+    let {codeInput, nameInput} = getInputs();
+    let code = codeInput ? codeInput.value.trim() : '';
+    let name = nameInput ? nameInput.value.trim() : 'عميلنا العزيز';
+    if(!code){ alert('ولد الكود الأول'); return; }
+    let phone = document.getElementById('waPhoneInput') ? document.getElementById('waPhoneInput').value.trim() : '';
+if(!phone){
+  if(!document.getElementById('waPhoneInput')){
+    let inp = document.createElement('input');
+    inp.id = 'waPhoneInput';
+    inp.placeholder = 'رقم واتساب المريض - مثال 01097330585';
+    inp.type = 'tel';
+    inp.style.cssText = 'width:100%;padding:12px;margin-top:10px;border:1px solid #25D366;border-radius:12px;font-size:16px';
+    document.getElementById('waSendBtn').before(inp);
+    inp.focus();
+    alert('اكتب رقم المريض في الخانة اللي ظهرت، ودوس ارسال واتساب تاني');
+    return;
+  } else { return; }
+}
+phone = phone.replace(/[^0-9]/g,'');
+if(phone.startsWith('0')) phone = '20' + phone.slice(1);
+    let site = location.href.split('?')[0];
+    let msg = 'أهلاً ' + name + '، نتيجتك جاهزة في معمل تحليلك ✅\n\nادخل هنا:\n' + site + '\n\nواكتب الكود ده:\n' + code;
+    window.open('https://wa.me/' + phone + '?text=' + encodeURIComponent(msg), '_blank');
+  };
+}
+})();
+</script>
+</body>
+</html>
